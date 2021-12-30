@@ -1,34 +1,52 @@
 package com.andersont.bookshelf;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-
-import static com.andersont.bookshelf.Application.library;
+import javafx.scene.layout.GridPane;
 
 
 public class Controller {
+    public Library library;
 
     @FXML
-    public static ListView list;
+    public ListView list;
     public MenuItem about;
     public Menu autofill;
     public CheckMenuItem darkTheme;
-    public static BorderPane contentpane;
+    public BorderPane contentpane;
+
+    public void initialize(){
+        library = new Library();
+
+        // set up observableList for ListView
+        library.getActiveShelf().shelf.addListener((ListChangeListener<? super Book>) l -> {
+            updateListView();
+        });
+        updateListView();
+
+    };
+
+    public void updateListView(){
+        list.setItems(library.getActiveShelf().shelf);
+    }
+
 
     public void createBook(ActionEvent actionEvent) {
 
-        // this looks suspicious but it works ok
         Book b = new Book();
         library.addBook(b);
         library.activeBook = b;
 
-        GUIGenerator.updatePane();
-        GUIGenerator.updateList();
+        GUIGenerator generator = new GUIGenerator();
 
+        contentpane.setCenter( generator.generateBookPane(library.activeBook) );
+    }
 
-        System.out.println("HI!");
+    public void setContentpane(GridPane pane){
+        contentpane.setCenter(pane);
     }
 
     public void createShelf(ActionEvent actionEvent) {

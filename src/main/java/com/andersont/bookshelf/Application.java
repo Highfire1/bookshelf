@@ -22,14 +22,14 @@ public class Application extends javafx.application.Application {
         // create gui window
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 450);
+        scene.getStylesheets().add(Application.class.getResource("styles.css").toExternalForm());
+
         stage.setTitle(prop.getProperty("windowTitle"));
         //stage.getIcons().add(new Image("resources/assets/book.png"));
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(scene);
         stage.show();
     }
-
-    public static Library library = new Library();
 
     public static void main(String[] args) {
         launch();

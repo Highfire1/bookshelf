@@ -12,8 +12,6 @@ public class Library extends Book{
     public Shelf activeShelf;
     public Book activeBook;
 
-
-
     public Library() {
         Book example = new Book();
         example.setName("Matilda");
