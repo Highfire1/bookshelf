@@ -1,6 +1,5 @@
 package com.andersont.bookshelf;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -11,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class HelloApplication extends Application {
+public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -21,7 +20,7 @@ public class HelloApplication extends Application {
         prop.load(stream);
 
         // create gui window
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 450);
         stage.setTitle(prop.getProperty("windowTitle"));
         //stage.getIcons().add(new Image("resources/assets/book.png"));
@@ -29,6 +28,8 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+    public static Library library = new Library();
 
     public static void main(String[] args) {
         launch();
