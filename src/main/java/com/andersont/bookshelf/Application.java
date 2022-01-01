@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Application extends javafx.application.Application {
+    private FXMLLoader fxmlLoader;
+
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -20,7 +22,7 @@ public class Application extends javafx.application.Application {
         prop.load(stream);
 
         // create gui window
-        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
+        fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 450);
         scene.getStylesheets().add(Application.class.getResource("styles.css").toExternalForm());
 
@@ -29,6 +31,12 @@ public class Application extends javafx.application.Application {
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(scene);
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        Controller c = fxmlLoader.getController();
+        IO.writeLibrary(c.saveLocation, c.library);
     }
 
     public static void main(String[] args) {

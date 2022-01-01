@@ -1,1 +1,2 @@
+/* Remove borders from listview */
 .list-view { -fx-focus-color: transparent; }

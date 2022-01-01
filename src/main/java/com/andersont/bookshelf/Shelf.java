@@ -4,13 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 
-// Essentially a wrapper around an ObservableList
+// This class is essentially a wrapper around an ObservableList, with a few details
 public class Shelf {
-    private String name;
-    private LocalDateTime createddate;
-    private LocalDateTime lastmodified;
+    public String name;
+    public LocalDateTime createddate;
+    public LocalDateTime lastmodified;
 
     public ObservableList<Book> shelf;
 
@@ -24,6 +24,31 @@ public class Shelf {
         this.createddate = java.time.LocalDateTime.now();
         this.lastmodified = java.time.LocalDateTime.now();
         this.shelf = books;
+    }
+
+    // load from saved data
+    Shelf(String data, ObservableList<Book> src){
+        String[] values = data.split("\n");
+
+        this.name = values[0].split("::::")[1];
+        this.createddate = LocalDateTime.parse( values[1].split("::::")[1] );
+        this.lastmodified = LocalDateTime.parse( values[2].split("::::")[1] );
+
+        String[] shelfBooks =  values[4].split("::::");
+
+        for (Book book : src) {
+            for (String bookID : shelfBooks) {
+                if (book.getString("bookID").equals(bookID)) {
+                    shelf.add(book);
+                }
+            }
+        }
+    }
+
+    public void printShelf(){
+        for (Book book : shelf) {
+            System.out.println(book);
+        }
     }
 
 

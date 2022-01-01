@@ -1,88 +1,84 @@
 package com.andersont.bookshelf;
 
-import javafx.scene.image.Image;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.io.Serializable;
+import java.util.HashMap;
 
+// Essentially a glorified wrapper around a ObservableMap
 public class Book {
-    private String name;
-    private String review;
-    private LocalDate readdate;
-    private Integer rating;
+    private final ObservableMap<String, StringProperty> props = FXCollections.observableMap(new HashMap<>());
 
-    private Hashtable<String, String> properties;
-
-    // actual book data
-    private ArrayList<Image> thumbnails;
-    private Image thumbnail;
-    private Integer isbn;
-
-    private ArrayList<String> tags;
-
-
-    public String getName() {
-        return name;
+    Book() {
+        props.put("bookID", new SimpleStringProperty(""));
+        props.put("title", new SimpleStringProperty("New Book"));
+        props.put("rating", new SimpleStringProperty("0"));
+        props.put("review", new SimpleStringProperty(""));
+        props.put("readDate", new SimpleStringProperty(""));
+        props.put("isbn", new SimpleStringProperty(""));
+        props.put("thumbnail", new SimpleStringProperty(""));
     }
 
-    public void setName(String name) {
-        this.name = name;
+
+    Book(String data){
+        String[] values = data.trim().split("::::\n");
+
+        for (int i = 0; i < values.length;i+=2) {
+            String key = values[i];
+            StringProperty value = new SimpleStringProperty( values[i + 1].replace("::::", ""));
+            props.put(key, value);
+        }
     }
 
-    public LocalDate getReaddate() {
-        return readdate;
+    public String writeBook() {
+        StringBuilder sb = new StringBuilder();
+        for (String key : props.keySet()) {
+            sb.append(key + "::::\n");
+            sb.append(props.get(key).getValue() + "::::\n");
+        }
+        return sb.toString();
     }
 
-    public void setReaddate(LocalDate readdate) {
-        this.readdate = readdate;
+    public void printBook() {
+        System.out.println("DATA FOR BOOK: ");
+        for (String key : props.keySet()) {
+            System.out.println(key + " : " + props.get(key));
+        }
     }
 
-    public Integer getRating() {
-        return rating;
+    public String toString() {
+        return this.getString("title");
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    // getters and setters
+    public String getString(String key) {
+        if (!props.containsKey(key)) {
+            return "ERROR FOR KEY " + key;
+        }
+
+        // because .get() can't handle null
+        if (props.get(key) == null) {
+            return null;
+        }
+        return props.get(key).get();
     }
 
-    public Hashtable<String, String> getProperties() {
-        return properties;
+    public StringProperty getStringProperty(String key) {
+        if (!props.containsKey(key)) {
+            return new SimpleStringProperty("ERROR FOR KEY " + key);
+        }
+        return props.get(key);
     }
 
-    public void setProperties(Hashtable<String, String> properties) {
-        this.properties = properties;
+    public void setProperty(String key, String value) {
+        props.put(key, new SimpleStringProperty(value));
     }
 
-    public ArrayList<Image> getThumbnails() {
-        return thumbnails;
+    public ObservableMap getProps(){
+        return props;
     }
 
-    public void setThumbnails(ArrayList<Image> thumbnails) {
-        this.thumbnails = thumbnails;
-    }
-
-    public Image getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(Image thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public Integer getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(Integer isbn) {
-        this.isbn = isbn;
-    }
-
-    public ArrayList<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
-    }
 }
