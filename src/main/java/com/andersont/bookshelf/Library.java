@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 import java.util.ArrayList;
 
 public class Library extends Book{
-    private ObservableList<Book> library = FXCollections.observableArrayList();
+    private Shelf library = new Shelf();
     private ArrayList<Shelf> shelves = new ArrayList<>();
 
 
@@ -30,11 +30,11 @@ public class Library extends Book{
             bookID = Integer.parseInt(book.getString("bookID")) + 1;
         }
 
-        library.add(book);
+        library.addBook(book);
     }
 
     public void removeBook(Book book){
-        library.remove(book);
+        library.removeBook(book);
     }
 
     public void addShelf(Shelf shelf){
@@ -45,37 +45,40 @@ public class Library extends Book{
         shelves.remove(shelf);
     }
 
-    public Shelf searchForBook(String searchterm){
+    public void searchForBook(String searchterm){
+        if (searchterm.isBlank()) {
+            activeShelf = library;
+            return;
+        }
+        Shelf results = new Shelf();
 
-        ObservableList<Book> results = FXCollections.observableArrayList();
+        for (Book book : library.shelf) {
+            for (String data : book.bookData()) {
+                if (data.toLowerCase().contains(searchterm.toLowerCase())) {
+                    //System.out.println("MATCH: " + searchterm + ", " + data);
+                    results.addBook(book);
+                    break;
+                }
+            }
+        }
 
-        // search for options and populate shelf with books here
-
-        return new Shelf(results);
+        activeShelf = results;
     }
 
     public Shelf getActiveShelf() {
-        return activeShelf != null ? activeShelf : new Shelf(library);
+        if (activeShelf == null) {
+            return library;
+        } else {
+            return activeShelf;
+        }
     }
 
     public ObservableList<Book> getLibrary() {
-        return library;
-    }
-
-    public void setLibrary(ObservableList<Book> library) {
-        this.library = library;
+        return library.shelf;
     }
 
     public ArrayList<Shelf> getShelves() {
         return shelves;
-    }
-
-    public void setShelves(ArrayList<Shelf> shelves) {
-        this.shelves = shelves;
-    }
-
-    public void setActiveShelf(Shelf activeShelf) {
-        this.activeShelf = activeShelf;
     }
 
     public int getBookID() {

@@ -37,6 +37,7 @@ public class Application extends javafx.application.Application {
     public void stop() {
         Controller c = fxmlLoader.getController();
         IO.writeLibrary(c.saveLocation, c.library);
+        System.out.println("SAVING DATA");
     }
 
     public static void main(String[] args) {

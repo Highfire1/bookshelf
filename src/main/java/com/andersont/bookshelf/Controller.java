@@ -1,16 +1,21 @@
 package com.andersont.bookshelf;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 
 import java.util.Properties;
 
 
 public class Controller {
     public Library library;
+    public TextField searchBar;
+    public Menu shelfMenu;
     private GUIGenerator generator;
 
     Book tempBook = new Book();
@@ -21,7 +26,7 @@ public class Controller {
     public CheckMenuItem darkTheme;
     public BorderPane contentpane;
 
-    //String savelocation = System.getProperty("user.dir") + "\bookshelf_data.txt";
+    String savelocation = System.getProperty("user.dir") + "\\bookshelf_data.txt";
     public String saveLocation = "C:\\Users\\Ander\\Desktop\\temp";
     public Properties properties = IO.getBundleFile();
 
@@ -33,41 +38,73 @@ public class Controller {
         list.setItems(library.getActiveShelf().shelf);
 
         // load last book
-        contentpane.setCenter( generator.generateBookPane(library.getActiveShelf().shelf.get(0)));
-        list.getSelectionModel().select(library.getActiveShelf().shelf.get(0));
-    };
+        viewBook(library.getActiveShelf().shelf.get(0));
+
+        // load shelves
+        reloadShelves();
+    }
 
     public void deleteBook(ActionEvent actionEvent) {
         library.removeBook((Book) list.getSelectionModel().getSelectedItem());
+        contentpane.setCenter(generator.emptyPane());
     }
 
     public void createBook(ActionEvent actionEvent) {
 
-        Book b = new Book();
-        b.setProperty("title", "BOOK_TITLE");
-        library.addBook(b);
-        contentpane.setCenter( generator.generateBookPane(b) );
-        list.getSelectionModel().select(b);
+        Book book = new Book();
+        book.setProperty("title", "BOOK_TITLE");
+        library.addBook(book);
+        viewBook(book);
+        list.getSelectionModel().select(book);
     }
 
     public void listClicked(MouseEvent mouseEvent) {
-        Book b = (Book) list.getSelectionModel().getSelectedItem();
+        viewBook( (Book) list.getSelectionModel().getSelectedItem() );
 
-        // don't reload if blank item clicked
-        // necessary because we're just using the selected item
-        if (b != tempBook) {
-            contentpane.setCenter( generator.generateBookPane(b) );
-            tempBook = b;
-        }
+    }
+
+    public void viewBook(Book book){
+        contentpane.setCenter( generator.generateBookPane(book) );
+        list.getSelectionModel().select(book);
+        list.refresh();
+
+        // refresh listview if title changes because observableMap doesn't do that for some reason?
+        book.getStringProperty("title").addListener((observableValue, oldVal, newVal) -> {
+            list.refresh();
+        });
     }
 
     public void createShelf(ActionEvent actionEvent) {
         Shelf sh = new Shelf();
         library.addShelf(sh);
+        reloadShelves();
     }
 
     public void deleteShelf(ActionEvent actionEvent) {
         contentpane.setCenter( generator.deleteShelfPane() );
+    }
+
+    public void reloadShelves() {
+        shelfMenu.show();
+
+        for (Shelf shelf : library.getShelves()) {
+            CheckMenuItem menuItem = new CheckMenuItem(shelf.name);
+
+            menuItem.setOnAction(event -> {
+                library.activeShelf = shelf;
+                list.setItems(library.getActiveShelf().shelf);
+
+
+
+                System.out.println("BUTTON PRESSED");
+            });
+
+            shelfMenu.getItems().add(menuItem);
+        }
+
+        for (MenuItem item : shelfMenu.getItems()) {
+            //System.out.println(item.getText() + item.getClass());
+        }
     }
 
     public void toggleDarkTheme(ActionEvent actionEvent) {
@@ -75,14 +112,19 @@ public class Controller {
     }
 
     public void importData(ActionEvent actionEvent) {
-        contentpane.setCenter( generator.importPane() );
-        initialize();
-        System.out.println("INITIALIZING");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.showOpenDialog(contentpane.getScene().getWindow());
+
+        // select zip to import
+        // unpack zip
+        // load zip
     }
 
     public void exportData(ActionEvent actionEvent) {
         IO.writeLibrary(saveLocation, library);
-        contentpane.setCenter( generator.exportPane() );
+
+        // compress to zip
+        // then open fileChooser with the zip
     }
 
     public void toggleAutofill(ActionEvent actionEvent) {
@@ -93,4 +135,15 @@ public class Controller {
     }
 
 
+    public void globalEvent(KeyEvent keyEvent) {
+        //list.refresh();
+        //System.out.println("REFRESH");
+    }
+
+    public void newSearch(KeyEvent keyEvent) {
+        String search = searchBar.textProperty().get() + keyEvent.getText();
+        library.searchForBook(search);
+
+        list.setItems(library.getActiveShelf().shelf);
+    }
 }

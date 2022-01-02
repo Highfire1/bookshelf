@@ -5,7 +5,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // Essentially a glorified wrapper around a ObservableMap
@@ -28,16 +28,26 @@ public class Book {
 
         for (int i = 0; i < values.length;i+=2) {
             String key = values[i];
-            StringProperty value = new SimpleStringProperty( values[i + 1].replace("::::", ""));
-            props.put(key, value);
+            String value = values[i+1].replace("::::", "");
+
+            StringProperty trueValue = new SimpleStringProperty(value);
+            props.put(key, trueValue);
         }
+    }
+
+    public ArrayList<String> bookData() {
+        ArrayList<String> values = new ArrayList<>();
+        for(StringProperty value : props.values()) {
+            values.add(value.get());
+        }
+        return values;
     }
 
     public String writeBook() {
         StringBuilder sb = new StringBuilder();
         for (String key : props.keySet()) {
             sb.append(key + "::::\n");
-            sb.append(props.get(key).getValue() + "::::\n");
+            sb.append(props.get(key).get().replaceAll("::::", "") + "::::\n");
         }
         return sb.toString();
     }
@@ -47,6 +57,7 @@ public class Book {
         for (String key : props.keySet()) {
             System.out.println(key + " : " + props.get(key));
         }
+        System.out.println();
     }
 
     public String toString() {

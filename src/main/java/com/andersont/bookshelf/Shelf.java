@@ -24,6 +24,7 @@ public class Shelf {
         this.createddate = java.time.LocalDateTime.now();
         this.lastmodified = java.time.LocalDateTime.now();
         this.shelf = books;
+        this.name = "New Shelf";
     }
 
     // load from saved data
@@ -43,6 +44,14 @@ public class Shelf {
                 }
             }
         }
+    }
+
+    public void addBook(Book book) {
+        shelf.add(book);
+    }
+
+    public void removeBook(Book book) {
+        shelf.remove(book);
     }
 
     public void printShelf(){

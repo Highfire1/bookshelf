@@ -1,7 +1,9 @@
 package com.andersont.bookshelf;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -12,8 +14,12 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -73,11 +79,9 @@ public class GUIGenerator extends Controller {
 
         slider.setValue(Double.parseDouble(book.getString("rating"))); // because the binding doesn't set it???
 
-        TextFormatter formatter = new TextFormatter<>(new NumberStringConverter("#"));
-        formatter.setValue(book.getStringProperty("rating"));
-
-        bindBidirectional(formatter.valueProperty(), slider.valueProperty());
-
+        StringProperty bookReview = book.getStringProperty("rating");
+        DoubleProperty sliderNum = slider.valueProperty();
+        bookReview.bind(sliderNum.asString());
 
         pane.add(rating, 1, 2);
         pane.add(slider, 2, 2);
@@ -85,6 +89,8 @@ public class GUIGenerator extends Controller {
         // readDate
         Label readDate = new Label(properties.getProperty("readDate"));
         TextField date = new TextField();
+
+        bindBidirectional(date.textProperty(), book.getStringProperty("readDate"));
 
         pane.add(readDate, 1, 3);
         pane.add(date, 2, 3);
@@ -94,9 +100,6 @@ public class GUIGenerator extends Controller {
         TextArea review = new TextArea();
         review.setWrapText(true);
 
-        // bindings (the secret sauce)
-        //bindBidirectional(stars.valueProperty(), Integer.parseInt(book.getStringProperty("title")));
-        //bindBidirectional(title.textProperty(), book.getStringProperty("title"));
         bindBidirectional(review.textProperty(), book.getStringProperty("review"));
 
 
@@ -204,11 +207,7 @@ public class GUIGenerator extends Controller {
         return new GridPane();
     }
 
-    public GridPane importPane() {
-        return new GridPane();
-    }
-
-    public GridPane exportPane() {
+    public GridPane emptyPane() {
         return new GridPane();
     }
 

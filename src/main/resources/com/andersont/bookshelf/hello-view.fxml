@@ -20,7 +20,7 @@
          <children>
             <MenuBar VBox.vgrow="ALWAYS">
               <menus>
-                <Menu mnemonicParsing="false" text="Shelf">
+                <Menu fx:id="shelfMenu" mnemonicParsing="false" text="Shelf">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#createBook" text="Create Book" />
                         <MenuItem mnemonicParsing="false" onAction="#deleteBook" text="Delete Book" />
@@ -31,10 +31,10 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Options">
                   <items>
-                        <CheckMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
+                        <CheckMenuItem fx:id="darkTheme" disable="true" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
                         <MenuItem mnemonicParsing="false" onAction="#importData" text="Import Data" />
                         <MenuItem mnemonicParsing="false" onAction="#exportData" text="Export Data" />
-                        <Menu fx:id="autofill" mnemonicParsing="false" onAction="#toggleAutofill" text="Autofill">
+                        <Menu fx:id="autofill" disable="true" mnemonicParsing="false" onAction="#toggleAutofill" text="Autofill">
                           <items>
                               <CheckMenuItem mnemonicParsing="false" text="Off" />
                               <CheckMenuItem mnemonicParsing="false" text="openlibrary" />
@@ -52,13 +52,13 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </Text>
-                  <TextField HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="searchBar" onKeyPressed="#newSearch" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <ListView fx:id="list" onMouseClicked="#listClicked" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
       <Separator orientation="VERTICAL" prefHeight="200.0" />
-      <BorderPane fx:id="contentpane" HBox.hgrow="ALWAYS" />
+      <BorderPane fx:id="contentpane" onKeyPressed="#globalEvent" HBox.hgrow="ALWAYS" />
    </children>
 </HBox>

@@ -9,6 +9,7 @@ import java.util.Properties;
 
 // unfortunately ObservableLists aren't serializable :(
 public class IO {
+    private static String bookExtension = ".txt";
 
     public static void writeLibrary(String saveLocation, Library library) {
         // write config file
@@ -19,7 +20,7 @@ public class IO {
 
         // write books
         for (Book book : library.getLibrary()) {
-            StringToFile(book.writeBook(), saveLocation + "\\books", book.getString("bookID").toString());
+            StringToFile(book.writeBook(), saveLocation + "\\books", book.getString("bookID").toString() + bookExtension);
         }
 
         // TODO write shelves
