@@ -7,14 +7,13 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<HBox prefHeight="450.0" prefWidth="804.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.andersont.bookshelf.Controller">
+<HBox onKeyPressed="#globalEvent" prefHeight="450.0" prefWidth="804.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.andersont.bookshelf.Controller">
    <children>
       <VBox minWidth="200.0" prefWidth="200.0">
          <children>
@@ -24,16 +23,13 @@
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#createBook" text="Create Book" />
                         <MenuItem mnemonicParsing="false" onAction="#deleteBook" text="Delete Book" />
-                        <MenuItem mnemonicParsing="false" onAction="#createShelf" text="Create Shelf" />
-                        <MenuItem mnemonicParsing="false" onAction="#deleteShelf" text="Delete Shelf" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Options">
                   <items>
-                        <CheckMenuItem fx:id="darkTheme" disable="true" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
-                        <MenuItem mnemonicParsing="false" onAction="#importData" text="Import Data" />
-                        <MenuItem mnemonicParsing="false" onAction="#exportData" text="Export Data" />
+                        <CheckMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#toggleDarkTheme" text="Dark Theme" />
+                        <MenuItem disable="true" mnemonicParsing="false" onAction="#importData" text="Import Data" />
+                        <MenuItem disable="true" mnemonicParsing="false" onAction="#exportData" text="Export Data" />
                         <Menu fx:id="autofill" disable="true" mnemonicParsing="false" onAction="#toggleAutofill" text="Autofill">
                           <items>
                               <CheckMenuItem mnemonicParsing="false" text="Off" />
@@ -59,6 +55,6 @@
          </children>
       </VBox>
       <Separator orientation="VERTICAL" prefHeight="200.0" />
-      <BorderPane fx:id="contentpane" onKeyPressed="#globalEvent" HBox.hgrow="ALWAYS" />
+      <BorderPane fx:id="contentpane" prefHeight="450.0" prefWidth="601.0" HBox.hgrow="ALWAYS" />
    </children>
 </HBox>

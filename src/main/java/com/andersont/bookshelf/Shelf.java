@@ -4,9 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-// This class is essentially a wrapper around an ObservableList, with a few details
+// Essentially a glorified wrapper around a ObservableList
 public class Shelf {
     public String name;
     public LocalDateTime createddate;
@@ -27,8 +26,10 @@ public class Shelf {
         this.name = "New Shelf";
     }
 
-    // load from saved data
+
     Shelf(String data, ObservableList<Book> src){
+        // Constructor for pre-written data
+        // Do not worry about the parameter violating OOP :)
         String[] values = data.split("\n");
 
         this.name = values[0].split("::::")[1];
@@ -55,10 +56,9 @@ public class Shelf {
     }
 
     public void printShelf(){
+        // convenience method
         for (Book book : shelf) {
             System.out.println(book);
         }
     }
-
-
 }

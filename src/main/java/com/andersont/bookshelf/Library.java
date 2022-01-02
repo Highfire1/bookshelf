@@ -1,25 +1,24 @@
 package com.andersont.bookshelf;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 
 public class Library extends Book{
-    private Shelf library = new Shelf();
-    private ArrayList<Shelf> shelves = new ArrayList<>();
+    // The centerpiece of the operation: The Library
+    // Stores all books and keeps them in order
 
+    private Shelf library = new Shelf(); // main library
+    private ArrayList<Shelf> shelves = new ArrayList<>(); // other shelves (not implemented)
 
-    public Shelf activeShelf = null;
+    public Shelf activeShelf = null; // tracks if searchbar is in use
 
-    private int bookID = 0;
-
-    Library() {
-    }
+    private int bookID = 0; // tracks # of books; not very cross device friendly but that's not in the specifications :)
 
     public void addBook(Book book){
+        // main method for adding a book to the library
 
-        // set book id if unknown
+        // set book id if not written
         if (book.getString("bookID") == "") {
             book.setProperty("bookID", String.valueOf(bookID));
             bookID++;
@@ -37,19 +36,15 @@ public class Library extends Book{
         library.removeBook(book);
     }
 
-    public void addShelf(Shelf shelf){
-        shelves.add(shelf);
-    }
-
-    public void removeShelf(Shelf shelf){
-        shelves.remove(shelf);
-    }
-
     public void searchForBook(String searchterm){
+        // Search function
+        // Probably the most terrible way to implement it but no one's counting o(n) here anyway
+
         if (searchterm.isBlank()) {
             activeShelf = library;
             return;
         }
+
         Shelf results = new Shelf();
 
         for (Book book : library.shelf) {
@@ -61,11 +56,12 @@ public class Library extends Book{
                 }
             }
         }
-
         activeShelf = results;
     }
 
+    // GETTERS AND SETTERS
     public Shelf getActiveShelf() {
+        // Yet another layer of abstraction so JavaFX doesn't get murdered by nulls
         if (activeShelf == null) {
             return library;
         } else {
@@ -75,10 +71,6 @@ public class Library extends Book{
 
     public ObservableList<Book> getLibrary() {
         return library.shelf;
-    }
-
-    public ArrayList<Shelf> getShelves() {
-        return shelves;
     }
 
     public int getBookID() {

@@ -1,24 +1,26 @@
 package com.andersont.bookshelf;
 
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 
 import java.util.Properties;
 
-
 public class Controller {
+    // The brains of the operation.
+    // Interfaces with essentially everything.
+
     public Library library;
     public TextField searchBar;
     public Menu shelfMenu;
     private GUIGenerator generator;
-
-    Book tempBook = new Book();
 
     @FXML
     public ListView list;
@@ -26,27 +28,52 @@ public class Controller {
     public CheckMenuItem darkTheme;
     public BorderPane contentpane;
 
-    String savelocation = System.getProperty("user.dir") + "\\bookshelf_data.txt";
-    public String saveLocation = "C:\\Users\\Ander\\Desktop\\temp";
-    public Properties properties = IO.getBundleFile();
+    public String saveLocation = System.getProperty("user.dir") + "\\bookshelf\\";
+    public Properties properties = IO.loadBundleFile();
+
 
     public void initialize(){
+        // Generate Library and GUIGenerator
+        System.out.println("Loading files from " + saveLocation);
         library = IO.loadLibrary(saveLocation);
         generator = new GUIGenerator();
 
         // ObservableList is a godsend
         list.setItems(library.getActiveShelf().shelf);
 
-        // load last book
-        viewBook(library.getActiveShelf().shelf.get(0));
+        // load welcome page or last book
+        if (library.getLibrary().size() == 1) {
+            contentpane.setCenter(generator.aboutPane());
+        } else {
+            viewBook(library.getActiveShelf().shelf.get(0));
+        }
 
-        // load shelves
-        reloadShelves();
+
+        // setup auto save
+        // note that you can't use a regular Timer as that creates its own thread, which doesn't close with JavaFX
+        // returns an integer because I couldn't figure out how to make it void
+        ScheduledService<Integer> svc = new ScheduledService<>() {
+            protected Task<Integer> createTask() {
+                return new Task<>() {
+                    protected Integer call() {
+                        IO.writeLibrary(saveLocation, library);
+                        return 1;
+                    }
+                };
+            }
+        };
+        svc.setPeriod(Duration.seconds(60));
+        svc.start();
+
     }
 
     public void deleteBook(ActionEvent actionEvent) {
         library.removeBook((Book) list.getSelectionModel().getSelectedItem());
         contentpane.setCenter(generator.emptyPane());
+
+        if (!list.getSelectionModel().isEmpty()) {
+            viewBook((Book) list.getSelectionModel().getSelectedItem());
+        }
     }
 
     public void createBook(ActionEvent actionEvent) {
@@ -59,8 +86,9 @@ public class Controller {
     }
 
     public void listClicked(MouseEvent mouseEvent) {
-        viewBook( (Book) list.getSelectionModel().getSelectedItem() );
-
+        if (list.getSelectionModel().getSelectedItem() != null) {
+            viewBook( (Book) list.getSelectionModel().getSelectedItem() );
+        }
     }
 
     public void viewBook(Book book){
@@ -74,43 +102,36 @@ public class Controller {
         });
     }
 
-    public void createShelf(ActionEvent actionEvent) {
-        Shelf sh = new Shelf();
-        library.addShelf(sh);
-        reloadShelves();
+    public void about(ActionEvent actionEvent) {
+        contentpane.setCenter( generator.aboutPane() );
     }
 
-    public void deleteShelf(ActionEvent actionEvent) {
-        contentpane.setCenter( generator.deleteShelfPane() );
-    }
 
-    public void reloadShelves() {
-        shelfMenu.show();
+    public void globalEvent(KeyEvent keyEvent) {
 
-        for (Shelf shelf : library.getShelves()) {
-            CheckMenuItem menuItem = new CheckMenuItem(shelf.name);
-
-            menuItem.setOnAction(event -> {
-                library.activeShelf = shelf;
-                list.setItems(library.getActiveShelf().shelf);
-
-
-
-                System.out.println("BUTTON PRESSED");
-            });
-
-            shelfMenu.getItems().add(menuItem);
+        if(keyEvent.getText().equals("n") && keyEvent.isControlDown()) {
+            createBook(new ActionEvent());
         }
 
-        for (MenuItem item : shelfMenu.getItems()) {
-            //System.out.println(item.getText() + item.getClass());
+        if(keyEvent.getCode().getName().equalsIgnoreCase("delete")) {
+            deleteBook(new ActionEvent());
         }
     }
 
+    public void newSearch(KeyEvent keyEvent) {
+        String search = searchBar.textProperty().get() + keyEvent.getText();
+        library.searchForBook(search);
+
+        list.setItems(library.getActiveShelf().shelf);
+    }
+
+
+    // UNIMPLEMENTED
     public void toggleDarkTheme(ActionEvent actionEvent) {
 
     }
 
+    // UNIMPLEMENTED
     public void importData(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.showOpenDialog(contentpane.getScene().getWindow());
@@ -120,6 +141,7 @@ public class Controller {
         // load zip
     }
 
+    // UNIMPLEMENTED
     public void exportData(ActionEvent actionEvent) {
         IO.writeLibrary(saveLocation, library);
 
@@ -127,23 +149,7 @@ public class Controller {
         // then open fileChooser with the zip
     }
 
+    // UNIMPLEMENTED
     public void toggleAutofill(ActionEvent actionEvent) {
-    }
-
-    public void about(ActionEvent actionEvent) {
-        contentpane.setCenter( generator.aboutPane() );
-    }
-
-
-    public void globalEvent(KeyEvent keyEvent) {
-        //list.refresh();
-        //System.out.println("REFRESH");
-    }
-
-    public void newSearch(KeyEvent keyEvent) {
-        String search = searchBar.textProperty().get() + keyEvent.getText();
-        library.searchForBook(search);
-
-        list.setItems(library.getActiveShelf().shelf);
     }
 }

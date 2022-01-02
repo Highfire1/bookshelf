@@ -2,6 +2,7 @@ package com.andersont.bookshelf;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -26,8 +27,9 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(fxmlLoader.load(), 800, 450);
         scene.getStylesheets().add(Application.class.getResource("styles.css").toExternalForm());
 
+        InputStream stream2 = new FileInputStream("resources/assets/book.png");
+        stage.getIcons().add(new Image(stream2));
         stage.setTitle(prop.getProperty("windowTitle"));
-        //stage.getIcons().add(new Image("resources/assets/book.png"));
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(scene);
         stage.show();
@@ -35,9 +37,9 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void stop() {
+        // save data on exit
         Controller c = fxmlLoader.getController();
         IO.writeLibrary(c.saveLocation, c.library);
-        System.out.println("SAVING DATA");
     }
 
     public static void main(String[] args) {

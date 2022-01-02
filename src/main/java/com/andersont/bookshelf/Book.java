@@ -13,6 +13,7 @@ public class Book {
     private final ObservableMap<String, StringProperty> props = FXCollections.observableMap(new HashMap<>());
 
     Book() {
+        // A generic constructor
         props.put("bookID", new SimpleStringProperty(""));
         props.put("title", new SimpleStringProperty("New Book"));
         props.put("rating", new SimpleStringProperty("0"));
@@ -22,8 +23,8 @@ public class Book {
         props.put("thumbnail", new SimpleStringProperty(""));
     }
 
-
     Book(String data){
+        // Constructor for pre-written data
         String[] values = data.trim().split("::::\n");
 
         for (int i = 0; i < values.length;i+=2) {
@@ -35,15 +36,8 @@ public class Book {
         }
     }
 
-    public ArrayList<String> bookData() {
-        ArrayList<String> values = new ArrayList<>();
-        for(StringProperty value : props.values()) {
-            values.add(value.get());
-        }
-        return values;
-    }
-
     public String writeBook() {
+        // Stores Book data into a String
         StringBuilder sb = new StringBuilder();
         for (String key : props.keySet()) {
             sb.append(key + "::::\n");
@@ -52,6 +46,19 @@ public class Book {
         return sb.toString();
     }
 
+    public ArrayList<String> bookData() {
+        // Used in search function
+
+        ArrayList<String> values = new ArrayList<>();
+        String[] wantedParams = {"title", "rating", "review", "readDate", "isbn"};
+
+        for (String param : wantedParams) {
+            values.add(props.get(param).get());
+        }
+        return values;
+    }
+
+    // convenience method
     public void printBook() {
         System.out.println("DATA FOR BOOK: ");
         for (String key : props.keySet()) {
@@ -60,11 +67,11 @@ public class Book {
         System.out.println();
     }
 
+    // GETTERS AND SETTERS
     public String toString() {
         return this.getString("title");
     }
 
-    // getters and setters
     public String getString(String key) {
         if (!props.containsKey(key)) {
             return "ERROR FOR KEY " + key;
@@ -77,6 +84,7 @@ public class Book {
         return props.get(key).get();
     }
 
+    // used in several bindings
     public StringProperty getStringProperty(String key) {
         if (!props.containsKey(key)) {
             return new SimpleStringProperty("ERROR FOR KEY " + key);
@@ -86,10 +94,6 @@ public class Book {
 
     public void setProperty(String key, String value) {
         props.put(key, new SimpleStringProperty(value));
-    }
-
-    public ObservableMap getProps(){
-        return props;
     }
 
 }
