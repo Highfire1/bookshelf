@@ -68,6 +68,7 @@ public class Book {
     }
 
     // GETTERS AND SETTERS
+    @Override
     public String toString() {
         return this.getString("title");
     }

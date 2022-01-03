@@ -11,9 +11,8 @@ import java.util.Properties;
 public class IO {
     private static final String bookExtension = ".txt"; // possibility to use .book :)
 
+    // writes the library to disk
     public static void writeLibrary(String saveLocation, Library library) {
-        // writes The library to disk
-
         // write library config file
         StringBuilder sb = new StringBuilder();
         sb.append("bookID::::" + library.getBookID() + "\n");
@@ -25,8 +24,8 @@ public class IO {
         }
     }
 
+    // loads The library from disk
     public static Library loadLibrary(String saveLocation) {
-        // loads The library from disk
         Library library = new Library();
 
         // load library config file
@@ -65,8 +64,8 @@ public class IO {
         return library;
     }
 
+    // helper method
     private static void StringToFile(String data, String location, String filename) {
-        // Convenience method
         try {
             PrintWriter out = new PrintWriter(location + filename);
             out.println(data);
@@ -76,9 +75,9 @@ public class IO {
         }
     }
 
+    // Loads bundle files from bundles folder
+    // Currently only supports english :)
     public static Properties loadBundleFile() {
-        // Loads bundle files from bundles folder
-        // Currently only supports english :)
         try {
             InputStream stream = new FileInputStream("resources/bundles/bundle.properties");
             Properties prop = System.getProperties();
@@ -91,10 +90,9 @@ public class IO {
         }
     }
 
+    // Better to ask for forgiveness than to check for permissions first :)
+    // tries to load given Image, if fails then returns placeholder Image,
     public static Image loadImage(String absolutePath) {
-        // Better to ask for forgiveness than to check for permissions first :)
-        // tries to load given Image, if fails then returns placeholder Image,
-
         try {
             return new Image(absolutePath);
         } catch (Exception e) {}
@@ -104,11 +102,9 @@ public class IO {
             return new Image(stream);
         } catch (Exception e) {
             System.out.println("Error while loading default thumbnail?!");
-            System.out.println(e);
+            e.printStackTrace();
             return null; // this leads to an error there is not much point in returning
         }
     }
+
 }
-
-
-

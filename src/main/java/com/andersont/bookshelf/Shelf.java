@@ -26,10 +26,9 @@ public class Shelf {
         this.name = "New Shelf";
     }
 
-
+    // Constructor for pre-written data
+    // Do not worry about the parameter violating OOP :)
     Shelf(String data, ObservableList<Book> src){
-        // Constructor for pre-written data
-        // Do not worry about the parameter violating OOP :)
         String[] values = data.split("\n");
 
         this.name = values[0].split("::::")[1];
@@ -55,8 +54,8 @@ public class Shelf {
         shelf.remove(book);
     }
 
+    // convenience method
     public void printShelf(){
-        // convenience method
         for (Book book : shelf) {
             System.out.println(book);
         }

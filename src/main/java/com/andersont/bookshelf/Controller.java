@@ -48,7 +48,6 @@ public class Controller {
             viewBook(library.getActiveShelf().shelf.get(0));
         }
 
-
         // setup auto save
         // note that you can't use a regular Timer as that creates its own thread, which doesn't close with JavaFX
         // returns an integer because I couldn't figure out how to make it void
@@ -64,9 +63,9 @@ public class Controller {
         };
         svc.setPeriod(Duration.seconds(60));
         svc.start();
-
     }
 
+    // Deletes the book selected in ListView
     public void deleteBook(ActionEvent actionEvent) {
         library.removeBook((Book) list.getSelectionModel().getSelectedItem());
         contentpane.setCenter(generator.emptyPane());
@@ -76,8 +75,8 @@ public class Controller {
         }
     }
 
+    // Creates a new book and selects it
     public void createBook(ActionEvent actionEvent) {
-
         Book book = new Book();
         book.setProperty("title", "BOOK_TITLE");
         library.addBook(book);
@@ -85,28 +84,32 @@ public class Controller {
         list.getSelectionModel().select(book);
     }
 
+    // Displays book when listView clicked
     public void listClicked(MouseEvent mouseEvent) {
         if (list.getSelectionModel().getSelectedItem() != null) {
             viewBook( (Book) list.getSelectionModel().getSelectedItem() );
         }
     }
 
+    // Convenience method to display pane for a Book
     public void viewBook(Book book){
+        // method to view a book
         contentpane.setCenter( generator.generateBookPane(book) );
         list.getSelectionModel().select(book);
         list.refresh();
 
-        // refresh listview if title changes because observableMap doesn't do that for some reason?
+        // refresh listview if title changes because observableMap refuses to accept a StringProperty
         book.getStringProperty("title").addListener((observableValue, oldVal, newVal) -> {
             list.refresh();
         });
     }
 
+    // opens about pane
     public void about(ActionEvent actionEvent) {
         contentpane.setCenter( generator.aboutPane() );
     }
 
-
+    // listens for for keyboard shortcuts
     public void globalEvent(KeyEvent keyEvent) {
 
         if(keyEvent.getText().equals("n") && keyEvent.isControlDown()) {
@@ -118,6 +121,7 @@ public class Controller {
         }
     }
 
+    // Makes the search bar functional
     public void newSearch(KeyEvent keyEvent) {
         String search = searchBar.textProperty().get() + keyEvent.getText();
         library.searchForBook(search);
